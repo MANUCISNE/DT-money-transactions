@@ -1,4 +1,4 @@
-import { defaultTheme } from './../styles/themes/default';
+import { defaultTheme } from './../styles/themes/default'
 import 'styled-components'
 
 type ThemeType = typeof defaultTheme
@@ -8,8 +8,10 @@ declare module 'styled-components' {
 }
 
 declare module '*.svg' {
-  import React = require('react');
-  export const ReactComponent: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
-  const src: string;
-  export default src;
+  import React = require('react')
+  export const ReactComponent: React.FunctionComponent<
+    React.SVGProps<SVGSVGElement>
+  >
+  const src: string
+  export default src
 }
