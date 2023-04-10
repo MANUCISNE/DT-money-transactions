@@ -1,4 +1,5 @@
-import { createContext, ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState, useCallback } from 'react'
+import { createContext } from 'use-context-selector'
 import { api } from '../lib/axios'
 
 // sempre tipar o estado dentro do react, principalmente se ele for um array[]
@@ -36,7 +37,7 @@ export function TransactionsProvider({
   // para mostrar em tela os dados, eu preciso ter um estado
   const [transactions, setTransactions] = useState<Transaction[]>([])
 
-  async function fetchTransactions(query?: string) {
+  const fetchTransactions = useCallback(async (query?: string) => {
     const response = await api.get('/transaction', {
       params: {
         _sort: 'createdAt',
@@ -46,29 +47,32 @@ export function TransactionsProvider({
     })
 
     setTransactions(response.data)
-  }
+  }, [])
   // o fetch sempre irá renderizar/executar quando alguma mudança acontecer dentro do Transactions, ou seja, não vai executar apenas 1x, e sim sempre que rendenrizar novamente o componente Transactions(). Então para renderizar apenas 1x devemos utilizar o fetch dentro UseEffect() do react.
   // fetch('http://localhost:3333/transaction').then(response => {
   // console.log(response)
   // })
 
-  async function createTransaction(data: CreateTransactionInput) {
-    const { description, price, category, type } = data
+  const createTransaction = useCallback(
+    async (data: CreateTransactionInput) => {
+      const { description, price, category, type } = data
 
-    const response = await api.post('transaction', {
-      description,
-      price,
-      category,
-      type,
-      createdAt: new Date(),
-    })
+      const response = await api.post('transaction', {
+        description,
+        price,
+        category,
+        type,
+        createdAt: new Date(),
+      })
 
-    setTransactions((state) => [response.data, ...state])
-  }
+      setTransactions((state) => [response.data, ...state])
+    },
+    [],
+  )
 
   useEffect(() => {
     fetchTransactions()
-  }, [])
+  }, [fetchTransactions])
 
   // o useEffect não pode ser async, para fazer async tem q fazer uma função fora do useEffect()
 
